@@ -6,7 +6,8 @@
 ---
 
 ## 🖼️ Project Image
-![Project Image](Airpulse-Project-Code/Air Pulse.jpeg)
+## 📸 Sneak Peek
+![Anime Gang Hub Screenshot](https://github.com/GHOSTEYE26/Airpulse-Project-Code/blob/main/Air%20Pulse.jpeg?raw=true)
 
 > 📁 Place your image inside an `images` folder and name it `project.jpg`
 
