@@ -6,7 +6,7 @@
 ---
 
 ## 🖼️ Project Image
-Air Pulse.jpg
+![Project Image](images/Air%20Pulse.jpeg)
 
 > 📁 Place your image inside an `images` folder and name it `project.jpg`
 
