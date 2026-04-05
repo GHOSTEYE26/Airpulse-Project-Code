@@ -1,97 +1,107 @@
-# 🌬️ AirPulse - Smart Air Quality Monitor
+# 🌬️ AirPulse - IoT Smart Air Quality Monitor
 
-[![ESP32](https://img.shields.io/badge/ESP32-Enabled-brightgreen.svg)](https://www.espressif.com/en/products/socs/esp32)
+[![ESP32](https://img.shields.io/badge/ESP32-Enabled-brightgreen.svg)](https://www.espressif.com/)
 [![DHT11](https://img.shields.io/badge/DHT11-Sensor-blue.svg)](https://github.com/adafruit/DHT-sensor-library)
 [![Google Sheets](https://img.shields.io/badge/Google%20Sheets-Integration-orange.svg)](https://workspace.google.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Real-time IoT Air Quality Monitoring System** built with **ESP32**. Measures temperature, humidity, and dust (PM) levels and automatically logs data to **Google Sheets** for remote monitoring and analysis.
+**AirPulse** is a real-time IoT-based Air Quality Monitoring System using **ESP32**. It measures **Temperature**, **Humidity**, and **Dust (PM2.5)** levels and automatically logs the data to **Google Sheets** for remote monitoring and analysis.
 
 ---
 
-## 📸 Sneak Peek
+## 📸 Project Preview
 
-![AirPulse Project](https://github.com/GHOSTEYE26/Airpulse-Project-Code/blob/main/Air%20Pulse.jpeg?raw=true)
+![AirPulse Project](Air%20Pulse.jpeg)
 
-> *Live environmental monitoring at your fingertips!*
+> Real-time environmental monitoring with cloud data logging.
+
+---
+
+## 🚀 Live Demo
+
+🔗 **View Live Data (Google Sheets / API):**  
+👉 [Click Here](YOUR_LIVE_DEMO_LINK)
+
+> Replace `YOUR_LIVE_DEMO_LINK` with your deployed Google Script or Sheet link.
 
 ---
 
 ## ✨ Features
 
-- 🌡️ **Accurate Temperature & Humidity** sensing with DHT11
-- 🌫️ **Dust / PM Detection** using Sharp optical dust sensor
-- ☁️ **Seamless Google Sheets Integration** — data logs automatically
-- 📡 **WiFi Enabled** — works over your local network
-- 📊 **Real-time Data Logging** every 10 seconds
-- 🔋 **Low-power friendly** design for long-term deployment
-- 📱 **Remote Access** — view your air quality from anywhere
+- 🌡️ Temperature & Humidity sensing (DHT11)
+- 🌫️ Dust / PM2.5 detection (Sharp GP2Y1010AU0F)
+- ☁️ Google Sheets cloud logging
+- 📡 WiFi enabled with auto-reconnect
+- 📊 Timestamp-based data logging
+- 🔄 Ready for dashboard integration
 
 ---
 
 ## 🧰 Hardware Components
 
-- **ESP32 Development Board**
-- **DHT11** Temperature & Humidity Sensor
-- **Sharp GP2Y1010AU0F** Optical Dust Sensor
-- Breadboard + Jumper Wires
-- USB Cable for programming/power
+- ESP32 Development Board  
+- DHT11 Temperature & Humidity Sensor  
+- Sharp GP2Y1010AU0F Dust Sensor  
+- Breadboard  
+- Jumper Wires  
+- USB Cable  
 
 ---
 
 ## 🔌 Circuit Connections
 
-### DHT11 Sensor
-| DHT11 Pin | ESP32 Pin |
-|-----------|-----------|
-| VCC       | 3.3V      |
-| GND       | GND       |
-| DATA      | GPIO 4    |
+### 🔹 DHT11
+| Pin  | ESP32 |
+|------|------|
+| VCC  | 3.3V |
+| GND  | GND  |
+| DATA | GPIO 4 |
 
-### Sharp GP2Y1010AU0F Dust Sensor
-| Dust Sensor Pin | ESP32 Pin | Notes |
-|-----------------|-----------|-------|
-| VCC             | 5V        | - |
-| GND             | GND       | - |
-| LED             | GPIO 5    | Controls internal IR LED |
-| Vo (Output)     | GPIO 34   | Analog reading (ADC1_CH6) |
-
-> **Tip**: The dust sensor needs precise LED pulsing timing for accurate readings (handled in code).
+### 🔹 Dust Sensor
+| Pin | ESP32 | Description |
+|-----|------|------------|
+| VCC | 5V   | Power |
+| GND | GND  | Ground |
+| LED | GPIO 5 | LED control |
+| Vo  | GPIO 34 | Analog output |
 
 ---
 
 ## ⚙️ How It Works
 
-1. **Sensors** collect real-time environmental data (Temp, Humidity, Dust).
-2. **ESP32** processes the raw values.
-3. Data is sent over **WiFi** using HTTP GET to a **Google Apps Script** web app.
-4. The script appends a new row to your **Google Sheet** with timestamp + readings.
-5. You can view live trends, create charts, or analyze historical data directly in Google Sheets.
+1. Sensors collect environmental data  
+2. ESP32 processes the readings  
+3. Data is sent via WiFi  
+4. Google Apps Script stores the data  
+5. Google Sheets displays real-time logs  
 
 ---
 
 ## 📥 Setup Instructions
 
-### 1. Google Sheets Setup (One-time)
+### 🔹 1. Google Sheets + Apps Script
 
-1. Create a new Google Sheet.
-2. Go to **Extensions → Apps Script**.
-3. Paste the following script (replace `SHEET_NAME` if needed):
+1. Create a new Google Sheet  
+2. Go to **Extensions → Apps Script**  
+3. Replace code with:
 
 ```javascript
-const SHEET_ID = "YOUR_SHEET_ID_HERE";   // Copy from your sheet URL
-const SHEET_NAME = "AirPulse_Data";
-
 function doGet(e) {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
-  const sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-  
-  const temp = e.parameter.temp;
-  const hum = e.parameter.hum;
-  const dust = e.parameter.dust;
-  const timestamp = new Date();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName("AirPulse_Data");
 
-  sheet.appendRow([timestamp, temp, hum, dust]);
-  
-  return ContentService.createTextOutput("Data logged successfully!");
+  if (!sheet) {
+    sheet = ss.insertSheet("AirPulse_Data");
+    sheet.appendRow(["Timestamp", "Temperature", "Humidity", "Dust"]);
+  }
+
+  if (e.parameter.temp && e.parameter.hum && e.parameter.dust) {
+    sheet.appendRow([
+      new Date(),
+      e.parameter.temp,
+      e.parameter.hum,
+      e.parameter.dust
+    ]);
+    return ContentService.createTextOutput("Success");
+  }
 }
