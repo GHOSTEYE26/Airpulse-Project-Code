@@ -20,9 +20,8 @@
 ## 🚀 Live Demo
 
 🔗 **View Live Data (Google Sheets / API):**  
-👉 [Click Here](YOUR_LIVE_DEMO_LINK)
+👉 [Click Here](https://airpulse-iota.vercel.app/)
 
-> Replace `YOUR_LIVE_DEMO_LINK` with your deployed Google Script or Sheet link.
 
 ---
 
